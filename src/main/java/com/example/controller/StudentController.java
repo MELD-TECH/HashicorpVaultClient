@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.model.Student;
 import com.example.service.StudentServiceImpl;
 
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.annotation.Timed;
+
 @RestController
 @RequestMapping("/app")
 public class StudentController {
@@ -25,6 +28,7 @@ public class StudentController {
 	@Autowired
 	private StudentServiceImpl service;
 	
+	@Timed
 	@GetMapping("/findall")
 	public ResponseEntity<Object> findAllStudents(){
 		Collection<Student> student = service.getAllStudents();
@@ -51,6 +55,7 @@ public class StudentController {
 		return new ResponseEntity<Object>(std, HttpStatus.OK);
 	}
 	
+	@Counted @Timed
 	@GetMapping("/student/{studentId}")
 	public ResponseEntity<Object> findStudentById(@PathVariable String studentId){
 		
@@ -58,7 +63,13 @@ public class StudentController {
 		
 		Student stud = service.getStudentById(id);
 		
-		return new ResponseEntity<Object>(stud, HttpStatus.OK);
+		if(stud == null) {
+			return new ResponseEntity<Object>("Record not found", HttpStatus.NOT_FOUND);
+		}else {
+			return new ResponseEntity<Object>(stud, HttpStatus.OK);
+		}
+		
+		
 	}
 	
 	@DeleteMapping("/remove/{studentid}")

@@ -10,3 +10,5 @@ Spring Boot version used
 ```shell
 Version: v3.2.1
 ```
+
+Added to this project is prometheus and actuator. Grafana can be used to visualize the prometheus metrics.
